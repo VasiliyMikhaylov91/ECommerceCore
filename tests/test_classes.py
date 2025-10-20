@@ -1,16 +1,17 @@
 from src.classes import Category, Product
 
-def test_category():
+
+def test_category() -> None:
     product = Product("product1", "some product", 1.0, 7)
-    category = Category("category1", "some category",
-                        [product])
+    category = Category("category1", "some category", [product])
     assert category.name == "category1"
     assert category.description == "some category"
     assert category.products == [product]
     Category.product_count = 0
     Category.category_count = 0
 
-def test_product():
+
+def test_product() -> None:
     product = Product("product1", "some product", 1.0, 7)
     assert product.name == "product1"
     assert product.description == "some product"
@@ -19,15 +20,20 @@ def test_product():
     Category.product_count = 0
     Category.category_count = 0
 
-def test_product_count():
+
+def test_product_count() -> None:
     product1 = Product("product1", "some product", 1.0, 7)
     product2 = Product("product2", "some product", 1.0, 7)
     product3 = Product("product3", "some product", 1.0, 7)
+    print(product1.price)
+    print(product2.price)
+    print(product3.price)
     assert Category.product_count == 3
     Category.product_count = 0
     Category.category_count = 0
 
-def test_category_count():
+
+def test_category_count() -> None:
     product1 = Product("product1", "some product", 1.0, 7)
     product2 = Product("product2", "some product", 1.0, 7)
     product3 = Product("product3", "some product", 1.0, 7)
