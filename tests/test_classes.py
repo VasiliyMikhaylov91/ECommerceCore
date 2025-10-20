@@ -84,7 +84,16 @@ def test_add_identical_name_product() -> None:
     assert product2.quantity == 14
 
 
-def test_set_price(capsys: Any) -> None:
+def test_set_price() -> None:
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("product1", "some product", 1.0, 7)
+    product1.price = 4
+    assert product1.price == 4
+
+
+def test_set_bad_price(capsys: Any) -> None:
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
