@@ -108,6 +108,19 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
+    @classmethod
+    def new_product(cls, info: dict) -> "Smartphone":
+        return cls(
+            info["name"],
+            info["description"],
+            info["price"],
+            info["quantity"],
+            info["efficiency"],
+            info["model"],
+            info["memory"],
+            info["color"],
+        )
+
 
 class LawnGrass(Product):
 
@@ -125,3 +138,15 @@ class LawnGrass(Product):
         self.country = country
         self.germination_period = germination_period
         self.color = color
+
+    @classmethod
+    def new_product(cls, info: dict) -> "LawnGrass":
+        return cls(
+            info["name"],
+            info["description"],
+            info["price"],
+            info["quantity"],
+            info["country"],
+            info["germination_period"],
+            info["color"],
+        )
