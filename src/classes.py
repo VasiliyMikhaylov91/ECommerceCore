@@ -71,15 +71,14 @@ class Category:
 
 
 class ProductsIterator:
-    products: list[Product]
 
-    def __init__(self, products: list[Product]) -> None:
-        self.products = products
+    def __init__(self, category: Category) -> None:
+        self.products = category.products.split("\n")
 
     def __iter__(self) -> "ProductsIterator":
         return self
 
-    def __next__(self) -> Product:
+    def __next__(self) -> str:
         if not self.products:
             raise StopIteration
         else:
