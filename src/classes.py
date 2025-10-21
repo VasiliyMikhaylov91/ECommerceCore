@@ -35,6 +35,12 @@ class Product:
             return
         self.__price = price
 
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        return self.price * self.quantity + other.price * other.quantity
+
 
 class Category:
     name: str
@@ -57,5 +63,24 @@ class Category:
     def products(self) -> str:
         result = ""
         for product in self.__products:
-            result += f"{product.name}, {product.price} руб. Остаток {product.quantity} шт.\n"
+            result += str(product) + "\n"
         return result
+
+    def __str__(self) -> str:
+        return f"{self.name}, количество продуктов: {sum(x.quantity for x in self.__products)} шт."
+
+
+class ProductsIterator:
+    products: list[Product]
+
+    def __init__(self, products: list[Product]) -> None:
+        self.products = products
+
+    def __iter__(self) -> "ProductsIterator":
+        return self
+
+    def __next__(self) -> Product:
+        if not self.products:
+            raise StopIteration
+        else:
+            return self.products.pop(0)
