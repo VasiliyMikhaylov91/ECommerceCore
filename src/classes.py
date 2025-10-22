@@ -39,6 +39,8 @@ class Product:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other: "Product") -> float:
+        if type(self) is not type(other):
+            raise TypeError("Можно складывать только одинаковые классы продуктов")
         return self.price * self.quantity + other.price * other.quantity
 
 
@@ -56,6 +58,8 @@ class Category:
         Category.product_count += len(products)
 
     def add_product(self, product: Product) -> None:
+        if not isinstance(product, Product):
+            raise TypeError("Объект не принадлежит классу продуктов")
         self.__products.append(product)
         Category.product_count += 1
 
@@ -83,3 +87,66 @@ class ProductsIterator:
             raise StopIteration
         else:
             return self.products.pop(0)
+
+
+class Smartphone(Product):
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ) -> None:
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    @classmethod
+    def new_product(cls, info: dict) -> "Smartphone":
+        return cls(
+            info["name"],
+            info["description"],
+            info["price"],
+            info["quantity"],
+            info["efficiency"],
+            info["model"],
+            info["memory"],
+            info["color"],
+        )
+
+
+class LawnGrass(Product):
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ) -> None:
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    @classmethod
+    def new_product(cls, info: dict) -> "LawnGrass":
+        return cls(
+            info["name"],
+            info["description"],
+            info["price"],
+            info["quantity"],
+            info["country"],
+            info["germination_period"],
+            info["color"],
+        )

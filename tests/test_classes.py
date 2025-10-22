@@ -1,9 +1,13 @@
 from typing import Any
 
-from src.classes import Category, Product, ProductsIterator
+import pytest
+
+from src.classes import Category, LawnGrass, Product, ProductsIterator, Smartphone
 
 
 def test_category() -> None:
+    """Проверка создания объекта категория"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -15,6 +19,8 @@ def test_category() -> None:
 
 
 def test_product() -> None:
+    """Проверка создания объекта продукт"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -26,6 +32,8 @@ def test_product() -> None:
 
 
 def test_product_count() -> None:
+    """Проверка подсчета продуктов в категории"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -37,6 +45,8 @@ def test_product_count() -> None:
 
 
 def test_category_count() -> None:
+    """Проверка подсчета количества категорий"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -50,6 +60,8 @@ def test_category_count() -> None:
 
 
 def test_add_product() -> None:
+    """Проверка добавления продукта в категорию"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -61,6 +73,8 @@ def test_add_product() -> None:
 
 
 def test_new_product() -> None:
+    """Проверка создания нового экземпляра продукта с помощью словаря"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -74,6 +88,8 @@ def test_new_product() -> None:
 
 
 def test_add_identical_name_product() -> None:
+    """Проверка добавления продукта с таким же именем в категорию"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -85,6 +101,8 @@ def test_add_identical_name_product() -> None:
 
 
 def test_set_price() -> None:
+    """Проверка установки цены продукту"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -94,6 +112,8 @@ def test_set_price() -> None:
 
 
 def test_set_bad_price(capsys: Any) -> None:
+    """Попытка установить нулевую или отрицательную цену продукту"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -107,6 +127,8 @@ def test_set_bad_price(capsys: Any) -> None:
 
 
 def test_product_str() -> None:
+    """Проверка строкового представления продукта"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -115,6 +137,8 @@ def test_product_str() -> None:
 
 
 def test_category_str() -> None:
+    """Проверка строкового представления категории"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -125,6 +149,8 @@ def test_category_str() -> None:
 
 
 def test_add_products() -> None:
+    """Проверка сложения продуктов"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -134,6 +160,8 @@ def test_add_products() -> None:
 
 
 def test_products_iterator() -> None:
+    """Проверка итератора продуктов в категории"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -143,3 +171,63 @@ def test_products_iterator() -> None:
     test_iter = ProductsIterator(category)
     assert next(test_iter) == "product1, 2.0 руб. Остаток: 5 шт."
     assert next(test_iter) == "product2, 1.0 руб. Остаток: 10 шт."
+
+
+def test_new_smartphone() -> None:
+    """Проверка создания объекта смартфон"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    smartphone1 = Smartphone(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5, 95.5, "S23 Ultra", 256, "Серый"
+    )
+    assert smartphone1.name == "Samsung Galaxy S23 Ultra"
+    assert smartphone1.description == "256GB, Серый цвет, 200MP камера"
+    assert smartphone1.price == 180000.0
+    assert smartphone1.quantity == 5
+    assert smartphone1.efficiency == 95.5
+    assert smartphone1.model == "S23 Ultra"
+    assert smartphone1.memory == 256
+    assert smartphone1.color == "Серый"
+
+
+def test_new_lawn_grass() -> None:
+    """Проверка создания газонная трава"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    grass1 = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
+    assert grass1.name == "Газонная трава"
+    assert grass1.description == "Элитная трава для газона"
+    assert grass1.price == 500.0
+    assert grass1.quantity == 20
+    assert grass1.country == "Россия"
+    assert grass1.germination_period == "7 дней"
+    assert grass1.color == "Зеленый"
+
+
+def test_different_type_products_add_error() -> None:
+    """Проверка исключения при попытке сложить разные продукты"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    smartphone1 = Smartphone(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5, 95.5, "S23 Ultra", 256, "Серый"
+    )
+    grass1 = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
+    with pytest.raises(TypeError):
+        smartphone1 + grass1
+
+
+def test_add_not_product_to_error() -> None:
+    """Проверка исключения при попытке добавления не продукта в категорию"""
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("product1", "some product", 1.0, 7)
+    category = Category("category1", "some category", [product1])
+    with pytest.raises(TypeError):
+        category.add_product("Not a Product")
