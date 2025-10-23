@@ -22,7 +22,18 @@ class BaseProduct(ABC):
         pass
 
 
-class Product(BaseProduct):
+class Info:
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__()
+        self.args = args
+        print(f"{self.__class__.__name__}{self.args}")
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}{self.args}"
+
+
+class Product(Info, BaseProduct):
     name: str
     description: str
     quantity: int
@@ -41,6 +52,7 @@ class Product(BaseProduct):
             self.__price = price
             self.quantity = quantity
             Product.products.append(self)
+            super().__init__(name, description, price, quantity)
 
     @classmethod
     def new_product(cls, info: dict) -> "Product":
@@ -74,18 +86,6 @@ class ProductInfo(ABC):
     @abstractmethod
     def products(self) -> str:
         pass
-
-
-class ParentInfo:
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.args = args
-        self.kwargs = kwargs
-        print(self.__repr__)
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__mro__}('{self.args}', '{self.kwargs}')"
 
 
 class Category(ProductInfo):
@@ -210,6 +210,6 @@ class Order(ProductInfo):
 
     @property
     def products(self, *args: Any, **kwargs: Any) -> str:
-        result = "Наименование товара\tКоличество\tОбщая стоимость\n"
+        result = ""
         result += f"{self.__product.name}\t{self.quantity}\t{self.price}\n"
         return result
