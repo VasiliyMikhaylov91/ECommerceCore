@@ -1,4 +1,28 @@
-class Product:
+from abc import ABC, abstractmethod
+from typing import Any
+
+
+class BaseProduct(ABC):
+
+    @abstractmethod
+    def new_product(self, *args: Any, **kwargs: Any) -> "Product":
+        pass
+
+    @property
+    @abstractmethod
+    def price(self) -> float:
+        pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def __add__(self, other: "Product") -> float:
+        pass
+
+
+class Product(BaseProduct):
     name: str
     description: str
     quantity: int
@@ -44,7 +68,27 @@ class Product:
         return self.price * self.quantity + other.price * other.quantity
 
 
-class Category:
+class ProductInfo(ABC):
+
+    @property
+    @abstractmethod
+    def products(self) -> str:
+        pass
+
+
+class ParentInfo:
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.args = args
+        self.kwargs = kwargs
+        print(self.__repr__)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__mro__}('{self.args}', '{self.kwargs}')"
+
+
+class Category(ProductInfo):
     name: str
     description: str
     category_count: int = 0
@@ -150,3 +194,22 @@ class LawnGrass(Product):
             info["germination_period"],
             info["color"],
         )
+
+
+class Order(ProductInfo):
+
+    def __init__(self, product: Product, quantity: int) -> None:
+        self.quantity = quantity
+        order_price = product.price * quantity
+        self.__price = order_price
+        self.__product = product
+
+    @property
+    def price(self) -> float:
+        return self.__price
+
+    @property
+    def products(self, *args: Any, **kwargs: Any) -> str:
+        result = "Наименование товара\tКоличество\tОбщая стоимость\n"
+        result += f"{self.__product.name}\t{self.quantity}\t{self.price}\n"
+        return result
