@@ -1,4 +1,39 @@
-class Product:
+from abc import ABC, abstractmethod
+from typing import Any
+
+
+class BaseProduct(ABC):
+
+    @abstractmethod
+    def new_product(self, *args: Any, **kwargs: Any) -> "Product":
+        pass
+
+    @property
+    @abstractmethod
+    def price(self) -> float:
+        pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def __add__(self, other: "Product") -> float:
+        pass
+
+
+class Info:
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__()
+        self.args = args
+        print(f"{self.__class__.__name__}{self.args}")
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}{self.args}"
+
+
+class Product(Info, BaseProduct):
     name: str
     description: str
     quantity: int
@@ -17,6 +52,7 @@ class Product:
             self.__price = price
             self.quantity = quantity
             Product.products.append(self)
+            super().__init__(name, description, price, quantity)
 
     @classmethod
     def new_product(cls, info: dict) -> "Product":
@@ -44,7 +80,15 @@ class Product:
         return self.price * self.quantity + other.price * other.quantity
 
 
-class Category:
+class ProductInfo(ABC):
+
+    @property
+    @abstractmethod
+    def products(self) -> str:
+        pass
+
+
+class Category(ProductInfo):
     name: str
     description: str
     category_count: int = 0
@@ -150,3 +194,22 @@ class LawnGrass(Product):
             info["germination_period"],
             info["color"],
         )
+
+
+class Order(ProductInfo):
+
+    def __init__(self, product: Product, quantity: int) -> None:
+        self.quantity = quantity
+        order_price = product.price * quantity
+        self.__price = order_price
+        self.__product = product
+
+    @property
+    def price(self) -> float:
+        return self.__price
+
+    @property
+    def products(self, *args: Any, **kwargs: Any) -> str:
+        result = ""
+        result += f"{self.__product.name}\t{self.quantity}\t{self.price}\n"
+        return result

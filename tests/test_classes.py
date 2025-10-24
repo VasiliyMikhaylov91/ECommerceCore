@@ -1,8 +1,10 @@
+from abc import ABC
 from typing import Any
 
 import pytest
 
-from src.classes import Category, LawnGrass, Product, ProductsIterator, Smartphone
+from src.classes import (BaseProduct, Category, Info, LawnGrass, Order, Product, ProductInfo, ProductsIterator,
+                         Smartphone)
 
 
 def test_category() -> None:
@@ -118,6 +120,7 @@ def test_set_bad_price(capsys: Any) -> None:
     Category.category_count = 0
     Product.products = []
     product = Product("product1", "some product", 1000.0, 7)
+    captured = capsys.readouterr()
     product.price = 0
     captured = capsys.readouterr()
     assert captured.out == "Цена не должна быть нулевая или отрицательная\n"
@@ -224,6 +227,7 @@ def test_different_type_products_add_error() -> None:
 
 def test_add_not_product_to_error() -> None:
     """Проверка исключения при попытке добавления не продукта в категорию"""
+
     Category.product_count = 0
     Category.category_count = 0
     Product.products = []
@@ -231,3 +235,56 @@ def test_add_not_product_to_error() -> None:
     category = Category("category1", "some category", [product1])
     with pytest.raises(TypeError):
         category.add_product("Not a Product")
+
+
+def test_product_inheritance() -> None:
+    """Проверка наследования класса Product"""
+
+    assert Product.__mro__ == (Product, Info, BaseProduct, ABC, object)
+
+
+def test_smartphone_inheritance() -> None:
+    """Проверка наследования класса Smartphone"""
+
+    assert Smartphone.__mro__ == (Smartphone, Product, Info, BaseProduct, ABC, object)
+
+
+def test_lawn_grass_inheritance() -> None:
+    """Проверка наследования класса LawnGrass"""
+
+    assert LawnGrass.__mro__ == (LawnGrass, Product, Info, BaseProduct, ABC, object)
+
+
+def test_product_info(capsys: Any) -> None:
+    """Проверка вывода информации об экземпляре класса в консоль при его создании"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("Продукт1", "Описание продукта", 1200, 10)
+    captured = capsys.readouterr()
+    assert captured.out == "Product('Продукт1', 'Описание продукта', 1200, 10)\n"
+    print(product1)
+
+
+def test_order() -> None:
+    """Проверка создания экземпляра класса Order"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("Продукт1", "Описание продукта", 1200, 10)
+    order1 = Order(product1, 5)
+    assert order1.products == "Продукт1\t5\t6000\n"
+
+
+def test_order_inheritance() -> None:
+    """Проверка наследования класса Order"""
+
+    assert Order.__mro__ == (Order, ProductInfo, ABC, object)
+
+
+def test_category_inheritance() -> None:
+    """Проверка наследования класса Order"""
+
+    assert Category.__mro__ == (Category, ProductInfo, ABC, object)
