@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 
 from src.classes import (BaseProduct, Category, Info, LawnGrass, Order, Product, ProductInfo, ProductsIterator,
-                         Smartphone)
+                         Smartphone, ZeroQuantityException)
 
 
 def test_category() -> None:
@@ -288,3 +288,74 @@ def test_category_inheritance() -> None:
     """Проверка наследования класса Order"""
 
     assert Category.__mro__ == (Category, ProductInfo, ABC, object)
+
+
+def test_product_zero_quantity_error() -> None:
+    """Проверка исключения при попытке создания экземпляра Product с нулевым параметром quantity"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    with pytest.raises(ValueError) as e:
+        Product("Продукт1", "Описание продукта", 1200, 0)
+    assert str(e.value) == "Товар с нулевым количеством не может быть добавлен."
+
+
+def test_category_middle_prise() -> None:
+    """Проверка работы метода middle_price класса Category"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("Продукт1", "Описание продукта", 1000, 5)
+    product2 = Product("Продукт2", "Описание продукта", 2000, 5)
+    category = Category("category1", "some category", [product1, product2])
+    assert category.middle_price() == 1500
+
+
+def test_middle_prise_empty_category() -> None:
+    """Проверка работы метода middle_price в категории без товаров"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    category = Category("category1", "some category", [])
+    assert category.middle_price() == 0
+
+
+def test_category_product_with_zero_quantity_create_error() -> None:
+    """Проверка исключения при создании категории с нулевым количеством товара в списке товаров"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("Продукт1", "Описание продукта", 1000, 5)
+    product2 = Product("Продукт2", "Описание продукта", 2000, 5)
+    product2.quantity = 0
+    with pytest.raises(ZeroQuantityException):
+        Category("category1", "some category", [product1, product2])
+
+
+def test_order_product_with_zero_quantity_create_error() -> None:
+    """Проверка исключения при создании заказа с нулевым количеством товара в параметрах товара"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product = Product("Продукт1", "Описание продукта", 1000, 5)
+    product.quantity = 0
+    with pytest.raises(ZeroQuantityException):
+        Order(product, 5)
+
+
+def test_category_add_product_with_zero_quantity() -> None:
+    """Проверка исключения при добавлении товара в категорию с нулевым количеством"""
+
+    Category.product_count = 0
+    Category.category_count = 0
+    Product.products = []
+    product1 = Product("Продукт1", "Описание продукта", 1000, 5)
+    product1.quantity = 0
+    category = Category("category1", "some category", [])
+    with pytest.raises(ZeroQuantityException):
+        category.add_product(product1)

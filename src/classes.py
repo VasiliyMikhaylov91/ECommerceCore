@@ -125,7 +125,7 @@ class Category(ProductInfo):
 
     def middle_price(self) -> float:
         try:
-            result = sum([x.price for x in self.__products]) / Category.product_count
+            result = sum([x.price * x.quantity for x in self.__products]) / sum([x.quantity for x in self.__products])
         except ZeroDivisionError:
             result = 0.0
         return result
