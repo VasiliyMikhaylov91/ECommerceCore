@@ -49,6 +49,8 @@ class Product(Info, BaseProduct):
                 Product.products[i] = self
                 break
         else:
+            if not quantity:
+                raise ValueError("Товар с нулевым количеством не может быть добавлен.")
             self.__price = price
             self.quantity = quantity
             Product.products.append(self)
@@ -88,6 +90,15 @@ class ProductInfo(ABC):
         pass
 
 
+class ZeroQuantityException(Exception):
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.message = args[0] if args else "Нельзя добавить товар с нулевым количеством"
+
+    def __str__(self) -> str:
+        return self.message
+
+
 class Category(ProductInfo):
     name: str
     description: str
@@ -97,6 +108,9 @@ class Category(ProductInfo):
     def __init__(self, name: str, description: str, products: list[Product]) -> None:
         self.name = name
         self.description = description
+        for product in products:
+            if not product.quantity:
+                raise ZeroQuantityException
         self.__products = products
         Category.category_count += 1
         Category.product_count += len(products)
@@ -104,8 +118,17 @@ class Category(ProductInfo):
     def add_product(self, product: Product) -> None:
         if not isinstance(product, Product):
             raise TypeError("Объект не принадлежит классу продуктов")
+        if not product.quantity:
+            raise ZeroQuantityException
         self.__products.append(product)
         Category.product_count += 1
+
+    def middle_price(self) -> float:
+        try:
+            result = sum([x.price * x.quantity for x in self.__products]) / sum([x.quantity for x in self.__products])
+        except ZeroDivisionError:
+            result = 0.0
+        return result
 
     @property
     def products(self) -> str:
@@ -199,6 +222,8 @@ class LawnGrass(Product):
 class Order(ProductInfo):
 
     def __init__(self, product: Product, quantity: int) -> None:
+        if not product.quantity:
+            raise ZeroQuantityException
         self.quantity = quantity
         order_price = product.price * quantity
         self.__price = order_price
